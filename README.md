@@ -28,7 +28,7 @@ Se implementan, ajustan y comparan tres clasificadores:
 |-- notebooks/
 |   |-- clasificadores_supervisados.ipynb   <- Notebook principal
 |-- data/
-|   |-- water_potability.csv               <- Dataset (auto-descargado si no existe)
+|   |-- water_potability.csv               <- Dataset
 |-- outputs/
 |   |-- eda_clases.png
 |   |-- eda_distribuciones.png
