@@ -28,7 +28,7 @@ Se implementan, ajustan y comparan tres clasificadores:
 |-- notebooks/
 |   |-- clasificadores_supervisados.ipynb   <- Notebook principal
 |-- data/
-|   |-- water_potability.csv               <- Dataset
+|   |-- water_potability.csv               <- Dataset (auto-descargado si no existe)
 |-- outputs/
 |   |-- eda_clases.png
 |   |-- eda_distribuciones.png
@@ -95,15 +95,17 @@ Arbol     SVM (RBF)    Random Forest
 
 ## Resultados Principales
 
+Resultados obtenidos al ejecutar el notebook con el dataset real (water_potability.csv):
+
 | Modelo | Accuracy | Precision | Recall | F1-Score | AUC-ROC |
 |---|---|---|---|---|---|
-| Arbol de Decision | ~0.62 | ~0.61 | ~0.62 | ~0.61 | ~0.62 |
-| SVM (Kernel RBF) | ~0.67 | ~0.66 | ~0.67 | ~0.66 | ~0.70 |
-| Random Forest | ~0.68 | ~0.67 | ~0.68 | ~0.67 | ~0.72 |
+| Arbol de Decision | 0.6037 | 0.5632 | 0.6037 | 0.4625 | **0.5159** |
+| SVM (Kernel RBF) | 0.5381 | 0.5001 | 0.5381 | 0.5058 | 0.4866 |
+| Random Forest | 0.5640 | 0.5161 | 0.5640 | **0.5129** | 0.4884 |
 
-*Valores aproximados — los exactos se generan al ejecutar el notebook.*
-
-**Modelo recomendado:** Random Forest, por su mejor balance de precision/recall, mayor AUC-ROC y menor tendencia al sobreajuste.
+- **Mejor F1-Score:** Random Forest (0.5129)
+- **Mejor AUC-ROC:** Arbol de Decision (0.5159)
+- **Mejor Accuracy:** Arbol de Decision (0.6037)
 
 ---
 
@@ -131,15 +133,15 @@ jupyter notebook notebooks/clasificadores_supervisados.ipynb
 
 ## Conclusiones Tecnicas
 
-1. **El problema no es linealmente separable.** Las correlaciones entre variables y la clase objetivo son menores a 0.15, lo que explica el techo de ~68% de accuracy incluso con modelos avanzados.
+1. **El problema es inherentemente dificil de separar.** Ningun modelo supero el 60% de accuracy, lo cual es consistente con las bajas correlaciones entre variables y la clase objetivo (menores a 0.15). El dataset tiene un limite natural de separabilidad con las variables disponibles.
 
-2. **El SVM requiere ajuste de hiperparametros.** Con configuracion por defecto el F1 era ~0.60; con GridSearchCV mejoro significativamente, validando la importancia de la optimizacion.
+2. **El Arbol de Decision obtuvo la mayor accuracy (0.6037) y AUC-ROC (0.5159)**, pero su F1-Score fue el mas bajo (0.4625), lo que indica que clasifica bien la clase mayoritaria (no potable) pero falla en detectar el agua potable.
 
-3. **El arbol de decision sobreajusta sin control de profundidad.** A max_depth sin restriccion, el train accuracy llega a 1.0 pero el test cae a ~0.55.
+3. **Random Forest obtuvo el mejor F1-Score (0.5129)**, siendo el modelo mas equilibrado entre precision y recall para ambas clases. Es la opcion recomendada para este problema.
 
-4. **El desbalance de clases (61%/39%) afecta el recall** de la clase minoritaria (potable). Se recomienda usar F1 ponderado como metrica principal en lugar de accuracy.
+4. **El SVM tuvo el peor desempeno general** en este dataset (Accuracy=0.5381, AUC-ROC=0.4866), lo que sugiere que la frontera de decision del kernel RBF no logra separar bien las clases con las variables disponibles. Incluso con GridSearchCV, el problema no tiene suficiente estructura para que SVM destaque.
 
-5. **Random Forest es la mejor opcion** para este dataset por su robustez ante outliers, manejo implicito del desbalance y menor sensibilidad a hiperparametros.
+5. **El desbalance de clases (61% no potable / 39% potable) explica el bajo F1** de todos los modelos en la clase minoritaria. Los modelos tienden a predecir "no potable" con mas frecuencia, penalizando el recall de la clase potable.
 
 ### Limitaciones
 - Dataset con nulos en variables clave (ph, Sulfate)
@@ -164,4 +166,4 @@ jupyter notebook notebooks/clasificadores_supervisados.ipynb
 
 ---
 
-*Equipo: GRUPO # 8
+*Equipo: GRUPO 8 — 4/5/2026
